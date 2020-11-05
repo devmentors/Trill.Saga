@@ -33,11 +33,6 @@ namespace Trill.Saga
     {
         public static IConveyBuilder AddCore(this IConveyBuilder builder)
         {
-            builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(LoggingCommandHandlerDecorator<>));
-            builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(LoggingEventHandlerDecorator<>));
-            builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
-            builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
-            
             builder.Services
                 .AddChronicle()
                 .AddScoped<IAdApiClient, AdApiHttpClient>()
@@ -59,6 +54,11 @@ namespace Trill.Saga
                 .AddPrometheus()
                 .AddJaeger()
                 .AddSecurity();
+            
+            builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(LoggingCommandHandlerDecorator<>));
+            builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(LoggingEventHandlerDecorator<>));
+            builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
+            builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
 
             return builder;
         }
