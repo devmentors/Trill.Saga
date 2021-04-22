@@ -21,7 +21,7 @@ using Convey.Tracing.Jaeger.RabbitMQ;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Trill.Saga.Clients;
 using Trill.Saga.Decorators;
 using Trill.Saga.Events.External;
@@ -81,9 +81,21 @@ namespace Trill.Saga
         }
         
         internal static CorrelationContext GetCorrelationContext(this IHttpContextAccessor accessor)
-            => accessor.HttpContext?.Request.Headers.TryGetValue("Correlation-Context", out var json) is true
-                ? JsonConvert.DeserializeObject<CorrelationContext>(json.FirstOrDefault())
-                : null;
+        {
+            if (accessor.HttpContext is null)
+            {
+                return null;
+            }
+
+            if (!accessor.HttpContext.Request.Headers.TryGetValue("Correlation-Context", out var json))
+            {
+                return null;
+            }
+
+            var value = json.FirstOrDefault();
+
+            return string.IsNullOrWhiteSpace(value) ? null : JsonSerializer.Deserialize<CorrelationContext>(value);
+        }
         
         internal static string GetSpanContext(this IMessageProperties messageProperties, string header)
         {
