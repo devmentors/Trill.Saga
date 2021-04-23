@@ -8,7 +8,6 @@ using Convey.CQRS.Events;
 using Convey.CQRS.Queries;
 using Convey.HTTP;
 using Convey.MessageBrokers;
-using Convey.MessageBrokers.CQRS;
 using Convey.MessageBrokers.Outbox;
 using Convey.MessageBrokers.Outbox.Mongo;
 using Convey.MessageBrokers.RabbitMQ;
@@ -24,7 +23,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 using Trill.Saga.Clients;
 using Trill.Saga.Decorators;
-using Trill.Saga.Events.External;
 using Trill.Saga.Services;
 
 namespace Trill.Saga
@@ -70,12 +68,7 @@ namespace Trill.Saga
                 .UseAccessTokenValidator()
                 .UsePrometheus()
                 .UseAuthentication()
-                .UseRabbitMq()
-                .SubscribeEvent<AdApproved>()
-                .SubscribeEvent<AdPaid>()
-                .SubscribeEvent<AdPublished>()
-                .SubscribeEvent<AdActionRejected>()
-                .SubscribeEvent<StoryActionRejected>();
+                .UseRabbitMq();
 
             return app;
         }
