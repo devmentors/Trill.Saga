@@ -29,10 +29,10 @@ namespace Trill.Saga.Sagas
                 // AdActionRejected m => m.AdId // Extend with AdId
             };
 
-        public Task HandleAsync(AdApproved message, ISagaContext context)
+        public async Task HandleAsync(AdApproved message, ISagaContext context)
         {
             Data.AdId = message.AdId;
-            return Task.CompletedTask;
+            await _messageBroker.SendAsync(new PayAd(message.AdId));
         }
 
         public Task CompensateAsync(AdApproved message, ISagaContext context)
@@ -40,9 +40,9 @@ namespace Trill.Saga.Sagas
             return Task.CompletedTask;
         }
 
-        public Task HandleAsync(AdPaid message, ISagaContext context)
+        public async Task HandleAsync(AdPaid message, ISagaContext context)
         {
-            return Task.CompletedTask;
+            await _messageBroker.SendAsync(new PublishAd(message.AdId));
         }
 
         public Task CompensateAsync(AdPaid message, ISagaContext context)
@@ -50,9 +50,9 @@ namespace Trill.Saga.Sagas
             return Task.CompletedTask;
         }
 
-        public Task HandleAsync(AdPublished message, ISagaContext context)
+        public async Task HandleAsync(AdPublished message, ISagaContext context)
         {
-            return Task.CompletedTask;
+            await CompleteAsync();
         }
 
         public Task CompensateAsync(AdPublished message, ISagaContext context)
