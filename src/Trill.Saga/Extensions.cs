@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
+using Convey.MessageBrokers.RabbitMQ.Serializers;
 using Trill.Saga.Clients;
 using Trill.Saga.Decorators;
 using Trill.Saga.Services;
@@ -44,7 +45,8 @@ namespace Trill.Saga
                 .AddQueryHandlers()
                 .AddInMemoryQueryDispatcher()
                 .AddHttpClient()
-                .AddRabbitMq(plugins: p => p.AddJaegerRabbitMqPlugin())
+                .AddRabbitMq(plugins: p => p.AddJaegerRabbitMqPlugin(),
+                    serializer: new NewtonsoftJsonRabbitMqSerializer())
                 .AddMessageOutbox(o => o.AddMongo())
                 .AddMongo()
                 .AddRedis()
