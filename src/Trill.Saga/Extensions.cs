@@ -21,9 +21,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
+using Convey.MessageBrokers.CQRS;
 using Convey.MessageBrokers.RabbitMQ.Serializers;
 using Trill.Saga.Clients;
 using Trill.Saga.Decorators;
+using Trill.Saga.Messages;
 using Trill.Saga.Services;
 
 namespace Trill.Saga
@@ -70,7 +72,11 @@ namespace Trill.Saga
                 .UseAccessTokenValidator()
                 .UsePrometheus()
                 .UseAuthentication()
-                .UseRabbitMq();
+                .UseRabbitMq()
+                .SubscribeEvent<AdActionRejected>()
+                .SubscribeEvent<AdApproved>()
+                .SubscribeEvent<AdPaid>()
+                .SubscribeEvent<AdPublished>();
 
             return app;
         }
